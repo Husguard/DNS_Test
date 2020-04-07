@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<form asp-action="ShowEmployees" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#result">
+        <p><input name="sort" type="radio" value="true" checked> По возрастанию</p>
+        <p><input name="sort" type="radio" value="false"> По убыванию</p>
+        <p><input name="column" type="radio" value="true" checked> По ФИО</p>
+        <p><input name="column" type="radio" value="false"> По отделу</p>
+        <input type="number" name="page" value=0 />
+    <label>Количество на страницу</label> 
+    <select id="countSelected" name="selected">
+        <option value=5>5</option>
+        <option value=10>10</option>
+        <option value=50>50</option>
+    </select>
+       <button class="btn btn-primary" type="submit" id="btnAll" name="submitbutton" value="all">Вывести сотрудников</button>
+</form>
+<form asp-action="AddEmployee" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#result">
+    <button class="btn btn-primary" type="submit">Добавить сотрудника</button>
+</form>
+<div id="result">
+
+</div>
+<div id="resultOf">
+
+</div>

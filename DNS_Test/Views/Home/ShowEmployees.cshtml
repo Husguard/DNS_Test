@@ -1,0 +1,61 @@
+﻿@model IEnumerable<DNS_Test.Models.Employee>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Department)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Post)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Chief)
+                </th>
+            </tr>
+        </thead>
+        <tr>
+            Количество: @Model.Count() <!-- это бы исправить как нить-->
+        </tr>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="coloring">
+                    <td id="number" hidden>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Department.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Post)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => @item.Date)
+                    </td>
+                    <td>
+                        @if (item.Chief == null)
+                        {
+                            @Html.Label("Отсутствует");
+                        }
+                        else
+                        {
+                            @Html.Label(item.Chief.Name);
+                        }
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
