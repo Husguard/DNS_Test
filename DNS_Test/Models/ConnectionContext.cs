@@ -66,8 +66,28 @@ namespace DNS_Test.Models
                         }
                     }
                 }
+                connection.Close();
             }
             return employees;
+        }
+        public int GetPage(int pages)
+        {
+            int value =0; 
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "SELECT COUNT(*) AS Count FROM Employees";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    using (reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        value = (int)Math.Ceiling(Convert.ToDecimal(reader["Count"]) / pages);
+                    }
+                }
+                connection.Close();
+                return value;
+            }
         }
         public void AddEmployee(Employee adding)
         {
@@ -84,6 +104,7 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
         public void DeleteEmployee(int id)
@@ -97,6 +118,7 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Id", id));
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
         }
         public IEnumerable<Employee> ShowChiefs(int id)
@@ -117,6 +139,7 @@ namespace DNS_Test.Models
                         }
                     }
                 }
+                connection.Close();
             }
             return chiefs;
         }
@@ -136,6 +159,7 @@ namespace DNS_Test.Models
                         adding = CreateEmployee(reader);
                     }
                 }
+                connection.Close();
             }
             return adding;
         }

@@ -18,15 +18,15 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Chief)
                 </th>
+                <th>
+                    Кнопки
+                </th>
             </tr>
         </thead>
-        <tr>
-            Количество: @Model.Count() <!-- это бы исправить как нить-->
-        </tr>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="coloring">
+                <tr class="rows">
                     <td id="number" hidden>
                         @Html.DisplayFor(modelItem => item.Id)
                     </td>

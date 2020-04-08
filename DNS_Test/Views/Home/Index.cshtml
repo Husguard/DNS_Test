@@ -1,26 +1,31 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<form asp-action="ShowEmployees" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#result">
-        <p><input name="sort" type="radio" value="true" checked> По возрастанию</p>
-        <p><input name="sort" type="radio" value="false"> По убыванию</p>
-        <p><input name="column" type="radio" value="true" checked> По ФИО</p>
-        <p><input name="column" type="radio" value="false"> По отделу</p>
-        <input type="number" name="page" value=0 />
-    <label>Количество на страницу</label> 
-    <select id="countSelected" name="selected">
-        <option value=5>5</option>
-        <option value=10>10</option>
-        <option value=50>50</option>
-    </select>
-       <button class="btn btn-primary" type="submit" id="btnAll" name="submitbutton" value="all">Вывести сотрудников</button>
-</form>
-<form asp-action="AddEmployee" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#result">
+    <form id="Show">
+        <label>Сортировки</label>
+        <div>
+            <div class="sort_buttons">
+                <p><input name="sort" type="radio" value="true" checked> По возрастанию</p>
+                <p><input name="sort" type="radio" value="false"> По убыванию</p>
+            </div>
+            <div class="sort_buttons">
+                <p><input name="column" type="radio" value="true" checked> По ФИО</p>
+                <p><input name="column" type="radio" value="false"> По отделу</p>
+            </div>
+        </div>
+        <div>
+            <label for="pageNumber">Страница</label>
+            <input id="pageNumber" type="number" name="page" value=1 min=1 max=1 onchange="ShowEmployees()" />
+            <label for="countSelected">Количество на страницу</label>
+            <select id="countSelected" name="selected" onchange="getPages()">
+                <option value=5>5</option>
+                <option value=10>10</option>
+                <option value=50 selected>50</option>
+            </select>
+        </div>
+    </form>
+<form asp-action="AddEmployee" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#resultOf">
     <button class="btn btn-primary" type="submit">Добавить сотрудника</button>
 </form>
-<div id="result">
-
-</div>
-<div id="resultOf">
-
-</div>
+<div id="result"></div>
+<div id="resultOf"></div>

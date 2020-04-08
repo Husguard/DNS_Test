@@ -1,9 +1,7 @@
 ﻿@model DNS_Test.Models.Employee
 
-<h3>Точно хотите удалить?</h3>
+<h3>Точно хотите удалить сотрудника?</h3>
 <div>
-    <h4>Сотрудник</h4>
-    <hr />
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Id)
@@ -49,13 +47,8 @@
             }
         </dd>
     </dl>
-    <!-- КАК ЭТОГО ИЗБЕЖАТЬ? какая то пересылка модели через страницы-->
     <form asp-action="DeleteEmployee">
         <input type="number" value="@Model.Id" name="Id" hidden />
-        <input type="text" value="@Model.Post" name="Post" hidden />
-        <input type="text" value="@Model.Name" name="Name" hidden />
-        <input type="number" value="@Model.Department.Id" name="DepartmentId" hidden />
-        <input type="date" value="@Model.Date" name="Date" hidden />
         <input type="submit" value="Удалить" class="btn btn-danger" />
     </form>
 </div>
