@@ -121,6 +121,6 @@ C:\Users\Админ\source\repos\DNS_Test\DNS_Test\bin\Debug\netcoreapp3.1\zh-Ha
 C:\Users\Админ\source\repos\DNS_Test\DNS_Test\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\Админ\source\repos\DNS_Test\DNS_Test\obj\Debug\netcoreapp3.1\Razor\Views\Home\AddEmployee.cshtml.g.cs
 C:\Users\Админ\source\repos\DNS_Test\DNS_Test\obj\Debug\netcoreapp3.1\Razor\Views\Home\DeleteEmployee.cshtml.g.cs
-C:\Users\Админ\source\repos\DNS_Test\DNS_Test\obj\Debug\netcoreapp3.1\DNS_Test.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Админ\source\repos\DNS_Test\DNS_Test\obj\Debug\netcoreapp3.1\Razor\Views\Home\ShowChiefs.cshtml.g.cs
 C:\Users\Админ\source\repos\DNS_Test\DNS_Test\bin\Debug\netcoreapp3.1\libman.json
+C:\Users\Админ\source\repos\DNS_Test\DNS_Test\obj\Debug\netcoreapp3.1\DNS_Test.MvcApplicationPartsAssemblyInfo.cache

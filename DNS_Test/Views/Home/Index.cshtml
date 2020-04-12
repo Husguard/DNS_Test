@@ -15,9 +15,9 @@
         </div>
         <div>
             <label for="pageNumber">Страница</label>
-            <input id="pageNumber" type="number" name="page" value=1 min=1 max=1 onchange="ShowEmployees()" />
+            <input id="pageNumber" type="number" name="page" value=1 min=1 max=1 />
             <label for="countSelected">Количество на страницу</label>
-            <select id="countSelected" name="selected" onchange="getPages()">
+            <select id="countSelected" name="selected" oninput="GetPages()">
                 <option value=5>5</option>
                 <option value=10>10</option>
                 <option value=50 selected>50</option>
@@ -27,5 +27,5 @@
 <form asp-action="AddEmployee" asp-controller="Home" data-ajax-method="GET" data-ajax="true" data-ajax-update="#resultOf">
     <button class="btn btn-primary" type="submit">Добавить сотрудника</button>
 </form>
-<div id="result"></div>
+<div id="mainEmployees"></div>
 <div id="resultOf"></div>

@@ -9,13 +9,13 @@ namespace DNS_Test.Models
 {
     public class ConnectionContext
     {
-        SqlDataReader reader;
-        List<Employee> employees;
-        string connectionName;
+        private SqlDataReader reader;
+        private List<Employee> employees;
+        private List<Department> departments;
+        private string connectionName;
         public ConnectionContext()
         {
             connectionName = "Server = (localdb)\\mssqllocaldb; Database = EmployeesDB; Trusted_Connection = True;";
-            employees = new List<Employee>();
         }
         private Employee CreateEmployee(SqlDataReader reader)
         {
@@ -44,10 +44,11 @@ namespace DNS_Test.Models
             }
             return adding;
         }
-        public IEnumerable<Employee> GetEmployees(int page, int selected, bool sort, bool column)
+        public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
         {
             string columnName = column ? "F.Name" : "Department";
             string sortName = sort ? "ASC" : "DESC";
+            employees = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -63,6 +64,28 @@ namespace DNS_Test.Models
                         while (reader.Read())
                         {
                             employees.Add(CreateEmployee(reader));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return employees;
+        }
+        public List<string> GetSuggests(string name)
+        {
+            List<string> employees = new List<string>();
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "SELECT Id, Name FROM Employees WHERE Name LIKE @name + '%'";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", name));
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            employees.Add(reader["Name"].ToString());
                         }
                     }
                 }
@@ -89,11 +112,36 @@ namespace DNS_Test.Models
                 return value;
             }
         }
+        public List<Department> GetDepartments()
+        {
+            if(departments == null)
+            {
+                departments = new List<Department>();
+                using (SqlConnection connection = new SqlConnection(connectionName))
+                {
+                    connection.Open();
+                    string sqlExpression = "SELECT Id, Name FROM Departments";
+                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                    {
+                        using (reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                departments.Add(new Department() { Id = Convert.ToInt32(reader["Id"]), Name = Convert.ToString(reader["Name"]) });
+                            }
+                        }
+                    }
+                    connection.Close();
+                }
+            }
+            return departments;
+        }
         public void AddEmployee(Employee adding)
         {
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
+                // здесь вместо начальника ID, нужно искать по имени его. как-то получить ID надо с помощью имени
                 string sqlExpression = "EXEC ProcedureAddEmployee @Name, @Post, @Department, @Chief, @Date";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
@@ -121,7 +169,7 @@ namespace DNS_Test.Models
                 connection.Close();
             }
         }
-        public IEnumerable<Employee> ShowChiefs(int id)
+        public List<Employee> ShowChiefs(int id)
         {
             List<Employee> chiefs = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(connectionName))
@@ -146,20 +194,27 @@ namespace DNS_Test.Models
         public Employee FindEmployee(int id)
         {
             Employee adding = new Employee();
-            using (SqlConnection connection = new SqlConnection(connectionName))
+            if(employees != null)
             {
-                connection.Open();
-                string sqlExpression = "EXEC ProcedureFindEmployee @Id";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                return employees.Where(x => x.Id == id).ToArray()[0];
+            }
+            else
+            {
+                using (SqlConnection connection = new SqlConnection(connectionName))
                 {
-                    command.Parameters.Add(new SqlParameter("@Id", id));
-                    using (reader = command.ExecuteReader())
+                    connection.Open();
+                    string sqlExpression = "EXEC ProcedureFindEmployee @Id";
+                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                     {
-                        reader.Read();
-                        adding = CreateEmployee(reader);
+                        command.Parameters.Add(new SqlParameter("@Id", id));
+                        using (reader = command.ExecuteReader())
+                        {
+                            reader.Read();
+                            adding = CreateEmployee(reader);
+                        }
                     }
+                    connection.Close();
                 }
-                connection.Close();
             }
             return adding;
         }

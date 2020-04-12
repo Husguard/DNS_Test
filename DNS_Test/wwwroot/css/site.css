@@ -109,10 +109,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
 
 .message {
-    background-color: green;
+    width: 35%;
+    background-color: white;
+    padding: 2px 5px 10px 2px;
+}
+
+.head {
+    border-bottom: 1px solid;
+    width: 100%;
+    overflow: hidden;
+    background: white;
 }

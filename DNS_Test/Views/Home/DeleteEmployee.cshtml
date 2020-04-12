@@ -1,56 +1,59 @@
 ﻿@model DNS_Test.Models.Employee
-
-<h3>Точно хотите удалить сотрудника?</h3>
-<div class="message-wrapper">
-    <dl class="message">
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="message">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="message">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Department)
-        </dt>
-        <dd class="message">
-            @Html.DisplayFor(model => model.Department.Name)
-        </dd>
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Post)
-        </dt>
-        <dd class="message">
-            @Html.DisplayFor(model => model.Post)
-        </dd>
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class="message">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class="message">
-            @Html.DisplayNameFor(model => model.Chief)
-        </dt>
-        <dd class="message">
-            @if (Model.Chief == null)
-            {
-                @Html.DisplayName("Отсутствует");
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.Chief.Name);
-            }
-        </dd>
-        <dd>
-            <form class="message" asp-action="DeleteEmployee">
-                <input type="number" value="@Model.Id" name="Id" hidden />
-                <input type="submit" value="Удалить" class="btn btn-danger" />
-            </form>
-        </dd>
-    </dl>
-</div>
+    <div class="message-wrapper">
+        <div class="message">
+            <h3>Точно хотите удалить сотрудника?</h3>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Id)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Id)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Department)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Department.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Post)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Post)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Date)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Date)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Chief)
+                </dt>
+                <dd>
+                    @if (Model.Chief == null)
+                    {
+                        @Html.DisplayName("Отсутствует");
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.Chief.Name);
+                    }
+                </dd>
+                <dd>
+                    <form asp-action="DeleteEmployee">
+                        <!-- здесь должен быть ajax со скрытием модального $(".selected_row").remove();-->
+                        <input type="number" value="@Model.Id" name="Id" hidden />
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        <button type="button">Нет</button>
+                    </form>
+                </dd>
+            </dl>
+        </div>
+    </div>
