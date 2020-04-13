@@ -81,12 +81,12 @@ namespace DNS_Test.Controllers
             return PartialView(context.FindEmployee(Id));
         }
         [HttpPost]
-        public IActionResult DeleteEmployee(Employee model)
+        public JsonResult DeleteEmployee(Employee model)
         {
             _logger.LogInformation("Deleting a employee: ID {0}", model.Id);
             context.DeleteEmployee(model.Id);
-            _logger.LogInformation("Employee with ID {0} is deleted. Redirect to Index", model.Id);
-            return RedirectToAction("Index");
+            _logger.LogInformation("ID {0} Employee and all referenced to him is deleted", model.Id);
+            return Json("Сотрудник успешно удален");
         }
     }
 }

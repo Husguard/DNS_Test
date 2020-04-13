@@ -36,8 +36,8 @@ function ShowSuggests(e) {
                 for (var i = 0; i < json.length; i++) {
                     var btnShow = document.createElement('a');
                     btnShow.innerText = json[i];
-                    btnShow.addEventListener('click', function () {
-                        $("#Chief_Name").val(btnShow.innerText); // учитывается последний элемент
+                    btnShow.addEventListener('click', function () { // здесь нужен стиль для выпадающего списка
+                        $("#Chief_Name").val(this.innerText);
                         $("#suggests").empty();
                     });
                     $("#suggests").append(btnShow);
@@ -58,17 +58,37 @@ $(document).on('click', ".rows", function () {
     var btnShow = document.createElement('button');
     btnShow.innerText = "Подчиненные";
     btnShow.className = 'btn btn-primary';
-    btnShow.addEventListener('click', buttonAction.bind(null, '/Home/ShowChiefs', 'POST'));
+    btnShow.addEventListener('click', function () {
+        var output = $('#resultOf');
+        $.ajax({
+            url: '/Home/ShowChiefs',
+            type: 'POST',
+            data: { id: window.selectedId.find('#number').text() },
+            success: function (json) {
+                output.html(json);
+            }
+        });
+    });
     var btnDel = document.createElement('button');
     btnDel.innerText = "Удалить сотрудника";
     btnDel.className = 'btn btn-primary';
-    btnDel.addEventListener('click', buttonAction.bind(null, '/Home/DeleteEmployee', 'GET')); // либо убрать подтверждение и сразу вызывать ajax метод удаления
+    btnDel.addEventListener('click',  function () {
+        var output = $('#resultOf');
+        $.ajax({
+            url: '/Home/DeleteEmployee',
+            type: 'GET',
+            data: { id: window.selectedId.find('#number').text() },
+            success: function (json) {
+                output.html(json);
+                selectedId.remove();
+            }
+        });
+    });
     btnSection.append(btnShow, btnDel);
     $(this).children().last().append(btnSection);
 });
 
-
-function buttonAction(link, method) {
+function buttonAction(link, method) { // объединение showChiefs и DeleteEmployee
     var output = $('#resultOf');
     $.ajax({
         url: link,

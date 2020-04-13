@@ -77,7 +77,7 @@ namespace DNS_Test.Models
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "SELECT Id, Name FROM Employees WHERE Name LIKE @name + '%'";
+                string sqlExpression = "EXEC ProcedureGetSuggests @name";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@name", name));
@@ -138,17 +138,30 @@ namespace DNS_Test.Models
         }
         public void AddEmployee(Employee adding)
         {
+            Employee employee = new Employee();
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                // здесь вместо начальника ID, нужно искать по имени его. как-то получить ID надо с помощью имени
-                string sqlExpression = "EXEC ProcedureAddEmployee @Name, @Post, @Department, @Chief, @Date";
+                string sqlExpression = "EXEC ProcedureGetSuggests @name";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", adding.Chief.Name));
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            employee.Id = Convert.ToInt32(reader["Id"]);
+                            employee.Name = Convert.ToString(reader["Name"]);
+                        }
+                    }
+                }
+                sqlExpression = "EXEC ProcedureAddEmployee @Name, @Post, @Department, @Chief, @Date";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@Name", adding.Name));
                     command.Parameters.Add(new SqlParameter("@Post", adding.Post));
                     command.Parameters.Add(new SqlParameter("@Department", adding.Department.Id));
-                    command.Parameters.Add(new SqlParameter("@Chief",  adding.Chief.Id == 0 ? (object)DBNull.Value : adding.Chief.Id)); // от формы приходит с chief с нулём
+                    command.Parameters.Add(new SqlParameter("@Chief",  employee.Id == 0 ? (object)DBNull.Value : employee.Id)); // от формы приходит с chief с нулём
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
                     command.ExecuteNonQuery();
                 }

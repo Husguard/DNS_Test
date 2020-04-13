@@ -47,8 +47,7 @@
                     }
                 </dd>
                 <dd>
-                    <form asp-action="DeleteEmployee">
-                        <!-- здесь должен быть ajax со скрытием модального $(".selected_row").remove();-->
+                    <form asp-action="DeleteEmployee" asp-controller="Home" data-ajax-method="POST" data-ajax="true" data-ajax-update="#resultOf">
                         <input type="number" value="@Model.Id" name="Id" hidden />
                         <button type="submit" class="btn btn-danger">Удалить</button>
                         <button type="button">Нет</button>
