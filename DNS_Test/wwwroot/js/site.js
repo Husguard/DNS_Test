@@ -1,6 +1,5 @@
-﻿var selectedId;
+﻿var selectedId = undefined;
 var page = 0;
-var todelete;
 function GetPages() {
     $.ajax({
         url: '/Home/GetPage',
@@ -27,6 +26,7 @@ function ShowEmployees() {
 }
 function ShowSuggests(e) {
     $("#suggests").empty();
+    $("#suggests").hide();
     if (e.value.length > 0) {
         $.ajax({
             url: '/Home/GetSuggests',
@@ -38,71 +38,51 @@ function ShowSuggests(e) {
                     btnShow.innerText = json[i];
                     btnShow.addEventListener('click', function () { // здесь нужен стиль для выпадающего списка
                         $("#Chief_Name").val(this.innerText);
-                        $("#suggests").empty();
+                        $("#suggests").hide();
                     });
                     $("#suggests").append(btnShow);
+                    $("#suggests").show();
                 }
             }
         });
     }
 }
-$(document).on('click', ".rows", function () {
-    $(this).parent().find(".rows").removeClass("selected_row");
-    $(this).parent().find("#buttonSection").remove();
-    $(this).toggleClass("selected_row");
-
+$(document).on('click', "tr", function () {
+    if (selectedId != undefined) {
+        selectedId.parent().find("tr").removeClass("selected_row");
+        selectedId.parent().find("#buttonSection").remove();
+    }
     selectedId = $(this);
-
+    selectedId.toggleClass("selected_row");
     var btnSection = document.createElement('div');
     btnSection.id = "buttonSection";
-    var btnShow = document.createElement('button');
-    btnShow.innerText = "Подчиненные";
-    btnShow.className = 'btn btn-primary';
-    btnShow.addEventListener('click', function () {
-        var output = $('#resultOf');
-        $.ajax({
-            url: '/Home/ShowChiefs',
-            type: 'POST',
-            data: { id: window.selectedId.find('#number').text() },
-            success: function (json) {
-                output.html(json);
-            }
-        });
-    });
-    var btnDel = document.createElement('button');
-    btnDel.innerText = "Удалить сотрудника";
-    btnDel.className = 'btn btn-primary';
-    btnDel.addEventListener('click',  function () {
-        var output = $('#resultOf');
-        $.ajax({
-            url: '/Home/DeleteEmployee',
-            type: 'GET',
-            data: { id: window.selectedId.find('#number').text() },
-            success: function (json) {
-                output.html(json);
-                selectedId.remove();
-            }
-        });
-    });
+    var btnShow = createButton('Подчиненные', '/Home/ShowChiefs', 'POST');
+    var btnDel = createButton('Удалить сотрудника', '/Home/DeleteEmployee', 'GET');
     btnSection.append(btnShow, btnDel);
     $(this).children().last().append(btnSection);
 });
-
-function buttonAction(link, method) { // объединение showChiefs и DeleteEmployee
-    var output = $('#resultOf');
-    $.ajax({
-        url: link,
-        type: method, 
-        data: { id: window.selectedId.find('#number').text() },
-        success: function (json) {
-            output.html(json);
-            selectedId.remove();
-        }
+function createButton(innerText, url, method) {
+    var btn = document.createElement('button');
+    btn.innerText = innerText;
+    btn.className = 'btn btn-primary';
+    btn.addEventListener('click', function () {
+        var output = $('#resultOf');
+        $.ajax({
+            url: url,
+            type: method,
+            data: { id: window.selectedId.find('#number').text() },
+            success: function (json) {
+                output.html(json);
+                // можно попробовать здесь находить кнопку выхода и давать ей функцию
+            }
+        });
     });
-};
+    return btn;
+}
 $().ready(function () {
     GetPages();
     $('input[name="column"]').on('change', function () { ShowEmployees(); });
     $('input[name="page"]').on('change', function () { ShowEmployees(); });
     $('input[name="sort"]').on('change', function () { ShowEmployees(); });
+    $("#countSelected").on('input', function () { GetPages(); });
 });

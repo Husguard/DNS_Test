@@ -10,14 +10,14 @@ GO
 
 CREATE TABLE [dbo].[Departments] (
     [Id]   INT        IDENTITY (1, 1) NOT NULL,
-    [Name] NCHAR (80) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+    [Name] NCHAR (40) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 );
 GO
 CREATE TABLE [dbo].[Employees] (
     [Id]         INT        IDENTITY (1, 1) NOT NULL,
-    [Name]       NCHAR (80) NOT NULL,
+    [Name]       NCHAR (40) NOT NULL,
     [Department] INT        NOT NULL,
-    [Post]       NCHAR (80) NOT NULL,
+    [Post]       NCHAR (40) NOT NULL,
     [Chief]      INT        NULL,
     [Date]       DATE       NOT NULL
 );
@@ -33,8 +33,8 @@ AS
 	INNER JOIN Employees AS S ON F.Chief = S.Id INNER JOIN Departments AS D ON F.Department = D.Id)
 GO
 CREATE PROCEDURE [dbo].[ProcedureAddEmployee]
-	@Name NVARCHAR(80),
-    @Post NVARCHAR(80),
+	@Name NVARCHAR(40),
+    @Post NVARCHAR(40),
     @Department INT,
     @Chief INT NULL,
 	@Date DATE
@@ -56,7 +56,7 @@ AS
 	((SELECT * FROM Employees WHERE Id = @id) AS F LEFT OUTER JOIN Employees AS S ON S.Id = F.Chief INNER JOIN Departments AS D ON F.Department = D.Id)
 GO
 CREATE PROCEDURE [dbo].[ProcedureGetSuggests]
-	@Name NVARCHAR(80)
+	@Name NVARCHAR(40)
 AS SELECT TOP(5) Id, Name FROM Employees WHERE Name LIKE @Name + '%'
 GO
 
