@@ -1,7 +1,8 @@
 ﻿@model DNS_Test.Models.Employee
-    <div class="message-wrapper">
-        <div class="message">
-            <h4>Точно хотите удалить сотрудника?</h4>
+    <div class="head">
+        <h4>Точно хотите удалить сотрудника?</h4>
+        <button id="closeButton" class="btn btn-primary">Закрыть</button>
+    </div>
             <dl>
                 <dt>
                     @Html.DisplayNameFor(model => model.Id)
@@ -49,10 +50,7 @@
                 <dd>
                     <form asp-action="DeleteEmployee" asp-controller="Home" data-ajax-method="POST" data-ajax="true" data-ajax-update="#resultOf">
                         <input type="number" value="@Model.Id" name="Id" hidden />
-                        <button type="submit" class="btn btn-danger" onclick="selectedId.remove()">Удалить</button>
-                        <button type="button" onclick="">Нет</button>
+                        <button type="submit" class="btn btn-danger" onclick="ShowSuccess()">Удалить</button>
                     </form>
                 </dd>
             </dl>
-        </div>
-    </div>

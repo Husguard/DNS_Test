@@ -23,14 +23,10 @@ namespace DNS_Test
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
@@ -46,19 +42,11 @@ namespace DNS_Test
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
-            app.Run(async (context) =>
-            {
-                logger.LogInformation("Processing request {0}", context.Request.Path);
-                await context.Response.WriteAsync("Hello World!");
             });
         }
     }

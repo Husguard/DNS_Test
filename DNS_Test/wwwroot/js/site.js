@@ -1,5 +1,4 @@
 ﻿var selectedId = undefined;
-var page = 0;
 function GetPages() {
     $.ajax({
         url: '/Home/GetPage',
@@ -9,18 +8,20 @@ function GetPages() {
             $("#pageNumber").attr({ "max": json, "min": 1 , "value" : 1});
         }
     });
-    ShowEmployees();
+    $("#Show").submit();
 }
-function ShowEmployees() {
-    var data = $('#Show').serializeArray();
-    var output = $('#mainEmployees');
+function AddEmployee() {
+    var output = $('#resultOf');
     $("#resultOf").empty();
     $.ajax({
-        url: '/Home/ShowEmployees',
+        url: '/Home/AddEmployee',
         type: 'GET',
-        data: data,
         success: function (json) {
             output.html(json);
+            $("#modal").show();
+            $("#closeButton").on('click', function () {
+                $("#modal").hide();
+            });
         }
     });
 }
@@ -36,7 +37,7 @@ function ShowSuggests(e) {
                 for (var i = 0; i < json.length; i++) {
                     var btnShow = document.createElement('a');
                     btnShow.innerText = json[i];
-                    btnShow.addEventListener('click', function () { // здесь нужен стиль для выпадающего списка
+                    btnShow.addEventListener('click', function () {
                         $("#Chief_Name").val(this.innerText);
                         $("#suggests").hide();
                     });
@@ -47,7 +48,7 @@ function ShowSuggests(e) {
         });
     }
 }
-$(document).on('click', "tr", function () {
+$(document).on('click', ".table tbody tr", function () { // криво
     if (selectedId != undefined) {
         selectedId.parent().find("tr").removeClass("selected_row");
         selectedId.parent().find("#buttonSection").remove();
@@ -56,7 +57,7 @@ $(document).on('click', "tr", function () {
     selectedId.toggleClass("selected_row");
     var btnSection = document.createElement('div');
     btnSection.id = "buttonSection";
-    var btnShow = createButton('Подчиненные', '/Home/ShowChiefs', 'POST');
+    var btnShow = createButton('Подчиненные', '/Home/ShowSubordinates', 'POST');
     var btnDel = createButton('Удалить сотрудника', '/Home/DeleteEmployee', 'GET');
     btnSection.append(btnShow, btnDel);
     $(this).children().last().append(btnSection);
@@ -73,16 +74,26 @@ function createButton(innerText, url, method) {
             data: { id: window.selectedId.find('#number').text() },
             success: function (json) {
                 output.html(json);
-                // можно попробовать здесь находить кнопку выхода и давать ей функцию
+                $("#modal").show();
+                $("#closeButton").on('click', function () {
+                    $("#modal").hide();
+                });
             }
         });
     });
     return btn;
 }
+function ShowSuccess() {
+    selectedId.remove();
+    setTimeout(function () {
+        $("#modal").hide();
+    }, 2000);
+}
 $().ready(function () {
     GetPages();
-    $('input[name="column"]').on('change', function () { ShowEmployees(); });
-    $('input[name="page"]').on('change', function () { ShowEmployees(); });
-    $('input[name="sort"]').on('change', function () { ShowEmployees(); });
+    $('input[name="column"]').on('change', function () { $("#Show").submit(); });
+    $('input[name="page"]').on('change', function () { $("#Show").submit(); });
+    $('input[name="sort"]').on('change', function () { $("#Show").submit(); });
     $("#countSelected").on('input', function () { GetPages(); });
+    $("#addButton").on('click', function () { AddEmployee(); });
 });

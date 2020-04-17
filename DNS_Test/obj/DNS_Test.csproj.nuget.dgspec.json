@@ -41,10 +41,6 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[3.1.1, )"
-            },
             "Microsoft.jQuery.Unobtrusive.Ajax": {
               "target": "Package",
               "version": "[3.2.6, )"

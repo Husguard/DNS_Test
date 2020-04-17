@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using DNS_Test.Models;
-using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DNS_Test.Controllers
@@ -29,13 +26,14 @@ namespace DNS_Test.Controllers
         }
         public JsonResult GetPage(int pages)
         {
-            _logger.LogInformation("Getting number of pages in database");
+            _logger.LogInformation("Requesting number of pages in database");
             int value = context.GetPage(pages);
             _logger.LogInformation("Return number of pages: {0}", value);
             return Json(value);
         }
         public JsonResult GetSuggests(string name)
         {
+         //   _logger.LogInformation("Requesting suggests of \"{0}\" employee", name); много сообщений
             dynamic value = context.GetSuggests(name);
             return Json(value);
         }
@@ -48,23 +46,25 @@ namespace DNS_Test.Controllers
         [HttpGet]
         public IActionResult ShowEmployees(int page, int selected, bool sort, bool column)
         {
-            _logger.LogInformation("Getting №{0} page of employees, size {1}", page, selected);
+            _logger.LogInformation("Requesting №{0} page of employees, size {1}", page, selected);
             List<Employee> result = context.GetEmployees(page - 1, selected, sort, column).ToList();
             _logger.LogInformation("Return page of employees size {0}", result.Count);
             return PartialView(result);
         }
         [HttpPost]
-        public IActionResult ShowChiefs(int Id)
+        public IActionResult ShowSubordinates(int Id)
         {
-            _logger.LogInformation("Getting subordinates of №{0} employee", Id);
-            List<Employee> result = context.ShowChiefs(Id);
+            _logger.LogInformation("Requesting subordinates of №{0} employee", Id);
+            List<Employee> result = context.ShowSubordinates(Id);
             _logger.LogInformation("Return {0} subordinates", result.Count);
             return PartialView(result);
         }
         [HttpGet]
         public IActionResult AddEmployee()
         {
+            _logger.LogInformation("Requesting list of Departments");
             ViewBag.Departments = new SelectList(context.GetDepartments(), "Id", "Name");
+            _logger.LogInformation("Return list of Departments");
             return PartialView();
         }
         [HttpPost]
@@ -85,7 +85,7 @@ namespace DNS_Test.Controllers
         {
             _logger.LogInformation("Deleting a employee: ID {0}", model.Id);
             context.DeleteEmployee(model.Id);
-            _logger.LogInformation("ID {0} Employee and all referenced to him is deleted", model.Id);
+            _logger.LogInformation("ID {0} Employee and all references to him is deleted", model.Id);
             return Json("Сотрудник успешно удален");
         }
     }

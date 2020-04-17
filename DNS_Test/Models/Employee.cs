@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DNS_Test.Models
 {
     public class Employee
-    { //  [HiddenInput(DisplayValue = false)]
+    {
         [Display(Name = "Номер")] public int Id { get; set; }
         [RegularExpression("[а-яА-ЯёЁa-zA-Z\\s]+$", ErrorMessage = "Имя не может иметь цифр или символов")] [Required(ErrorMessage = "Поле должно быть установлено")] [StringLength(40, ErrorMessage = "Длина строки должна быть до 40 символов")] [Display(Name = "Ф.И.О.")] public string Name { get; set; }
         [Required] [Display(Name = "Отдел")] public Department Department { get; set; } 

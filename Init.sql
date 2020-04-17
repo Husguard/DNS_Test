@@ -25,7 +25,7 @@ GO
 ALTER DATABASE EmployeesDB
 COLLATE Cyrillic_General_CI_AS
 GO
-CREATE PROCEDURE [dbo].[ProcedureShowChiefs]
+CREATE PROCEDURE [dbo].[ProcedureShowSubordinates]
 	@id int = 0
 AS
 	SELECT F.Id, F.Name, F.Department AS DepartmentId, D.Name AS Department, F.Post, S.Id AS ChiefId, S.Name AS Chief, F.Date FROM 
@@ -58,6 +58,10 @@ GO
 CREATE PROCEDURE [dbo].[ProcedureGetSuggests]
 	@Name NVARCHAR(40)
 AS SELECT TOP(5) Id, Name FROM Employees WHERE Name LIKE @Name + '%'
+GO
+CREATE PROCEDURE [dbo].[ProcedureGetDepartments]
+AS
+	SELECT Id, Name FROM Departments
 GO
 
 CREATE PROCEDURE [dbo].[ProcedureShowPageOfEmployees]

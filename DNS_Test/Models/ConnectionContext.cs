@@ -11,7 +11,7 @@ namespace DNS_Test.Models
         private SqlDataReader reader;
         private List<Employee> employees;
         private List<Department> departments;
-        private string connectionName;
+        private readonly string connectionName;
         public ConnectionContext()
         {
             connectionName = "Server = (localdb)\\mssqllocaldb; Database = EmployeesDB; Trusted_Connection = True;";
@@ -94,7 +94,7 @@ namespace DNS_Test.Models
         }
         public int GetPage(int pages)
         {
-            int value =0; 
+            int value = 0;
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -113,13 +113,13 @@ namespace DNS_Test.Models
         }
         public List<Department> GetDepartments()
         {
-            if(departments == null)
+            if (departments == null)
             {
                 departments = new List<Department>();
                 using (SqlConnection connection = new SqlConnection(connectionName))
                 {
                     connection.Open();
-                    string sqlExpression = "SELECT Id, Name FROM Departments";
+                    string sqlExpression = "EXEC ProcedureGetDepartments";
                     using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                     {
                         using (reader = command.ExecuteReader())
@@ -137,20 +137,23 @@ namespace DNS_Test.Models
         }
         public void AddEmployee(Employee adding)
         {
-            Employee employee = new Employee();
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "EXEC ProcedureGetSuggests @name";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                string sqlExpression;
+                if (adding.Chief.Name != null)
                 {
-                    command.Parameters.Add(new SqlParameter("@name", adding.Chief.Name));
-                    using (reader = command.ExecuteReader())
+                    sqlExpression = "EXEC ProcedureGetSuggests @name";
+                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                     {
-                        while (reader.Read())
+                        command.Parameters.Add(new SqlParameter("@name", adding.Chief.Name));
+                        using (reader = command.ExecuteReader())
                         {
-                            employee.Id = Convert.ToInt32(reader["Id"]);
-                            employee.Name = Convert.ToString(reader["Name"]);
+                            while (reader.Read())
+                            {
+                                adding.Chief.Id = Convert.ToInt32(reader["Id"]);
+                                adding.Chief.Name = Convert.ToString(reader["Name"]);
+                            }
                         }
                     }
                 }
@@ -160,7 +163,7 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Name", adding.Name));
                     command.Parameters.Add(new SqlParameter("@Post", adding.Post));
                     command.Parameters.Add(new SqlParameter("@Department", adding.Department.Id));
-                    command.Parameters.Add(new SqlParameter("@Chief",  employee.Id == 0 ? (object)DBNull.Value : employee.Id)); // от формы приходит с chief с нулём
+                    command.Parameters.Add(new SqlParameter("@Chief", adding.Chief.Name == null ? (object)DBNull.Value : adding.Chief.Id));
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
                     command.ExecuteNonQuery();
                 }
@@ -181,13 +184,13 @@ namespace DNS_Test.Models
                 connection.Close();
             }
         }
-        public List<Employee> ShowChiefs(int id)
+        public List<Employee> ShowSubordinates(int id)
         {
-            List<Employee> chiefs = new List<Employee>();
+            List<Employee> subordinates = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "EXEC ProcedureShowChiefs @Id";
+                string sqlExpression = "EXEC ProcedureShowSubordinates @Id";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@Id", id));
@@ -195,18 +198,18 @@ namespace DNS_Test.Models
                     {
                         while (reader.Read())
                         {
-                            chiefs.Add(CreateEmployee(reader));
+                            subordinates.Add(CreateEmployee(reader));
                         }
                     }
                 }
                 connection.Close();
             }
-            return chiefs;
+            return subordinates;
         }
         public Employee FindEmployee(int id)
         {
             Employee adding = new Employee();
-            if(employees != null)
+            if(employees != null) // массив обнуляется всегда
             {
                 return employees.Where(x => x.Id == id).ToArray()[0];
             }
