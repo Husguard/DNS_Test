@@ -35,7 +35,7 @@ where Id = @Id
  select Employees.Id, Employees.Name, Employees.Department, Employees.Post, Employees.Chief, Employees.Date
    from Employees
         inner join CTE 
-                on Employees.Id = CTE.Chief OR Employees.Chief is null)
+                on Employees.Id = CTE.Chief)
 select CTE.Id, CTE.Name, CTE.Chief AS ChiefId, S.Name AS Chief, cte.Department AS DepartmentId, D.Name AS Department, CTE.Date, CTE.Post
   from CTE  LEFT OUTER JOIN Employees AS S ON CTE.Chief = S.Id INNER JOIN Departments AS D ON CTE.Department = D.Id ORDER BY CTE.Id DESC
 GO
