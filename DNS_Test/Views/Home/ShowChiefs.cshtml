@@ -20,7 +20,7 @@
         </tr>
     </thead>
     <tr>
-        Количество подчиненных: @Model.Count()
+        Количество: @Model.Count()
         <button id="closeButton" class="btn btn-primary">Закрыть</button>
     </tr>
     <tbody>
@@ -40,7 +40,14 @@
                     @Html.DisplayFor(modelItem => item.Date)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Chief.Name)
+                    @if (item.Chief.Name == "")
+                    {
+                        @Html.Label("Отсутствует");
+                    }
+                    else
+                    {
+                        @Html.Label(item.Chief.Name);
+                    }
                 </td>
             </tr>
         }

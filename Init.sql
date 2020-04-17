@@ -25,12 +25,19 @@ GO
 ALTER DATABASE EmployeesDB
 COLLATE Cyrillic_General_CI_AS
 GO
-CREATE PROCEDURE [dbo].[ProcedureShowSubordinates]
-	@id int = 0
+CREATE PROCEDURE [dbo].[ProcedureShowChiefs]
+	@Id int = 0
 AS
-	SELECT F.Id, F.Name, F.Department AS DepartmentId, D.Name AS Department, F.Post, S.Id AS ChiefId, S.Name AS Chief, F.Date FROM 
-	((SELECT * FROM Employees WHERE Chief = @id) AS F 
-	INNER JOIN Employees AS S ON F.Chief = S.Id INNER JOIN Departments AS D ON F.Department = D.Id)
+		with CTE as 
+(select Id, Name, Department, Post, Chief, Date from Employees
+where Id = @Id
+ union all
+ select Employees.Id, Employees.Name, Employees.Department, Employees.Post, Employees.Chief, Employees.Date
+   from Employees
+        inner join CTE 
+                on Employees.Id = CTE.Chief OR Employees.Chief is null)
+select CTE.Id, CTE.Name, CTE.Chief AS ChiefId, S.Name AS Chief, cte.Department AS DepartmentId, D.Name AS Department, CTE.Date, CTE.Post
+  from CTE  LEFT OUTER JOIN Employees AS S ON CTE.Chief = S.Id INNER JOIN Departments AS D ON CTE.Department = D.Id ORDER BY CTE.Id DESC
 GO
 CREATE PROCEDURE [dbo].[ProcedureAddEmployee]
 	@Name NVARCHAR(40),

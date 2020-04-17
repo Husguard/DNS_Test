@@ -57,9 +57,9 @@ $(document).on('click', ".table tbody tr", function () { // криво
     selectedId.toggleClass("selected_row");
     var btnSection = document.createElement('div');
     btnSection.id = "buttonSection";
-    var btnShow = createButton('Подчиненные', '/Home/ShowSubordinates', 'POST');
+    var btnShowChiefs = createButton('Руководители', '/Home/ShowChiefs', 'POST');
     var btnDel = createButton('Удалить сотрудника', '/Home/DeleteEmployee', 'GET');
-    btnSection.append(btnShow, btnDel);
+    btnSection.append(btnShowChiefs, btnDel);
     $(this).children().last().append(btnSection);
 });
 function createButton(innerText, url, method) {

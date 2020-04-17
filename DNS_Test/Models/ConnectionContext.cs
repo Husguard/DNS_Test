@@ -184,13 +184,13 @@ namespace DNS_Test.Models
                 connection.Close();
             }
         }
-        public List<Employee> ShowSubordinates(int id)
+        public List<Employee> ShowChiefs(int id)
         {
             List<Employee> subordinates = new List<Employee>();
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "EXEC ProcedureShowSubordinates @Id";
+                string sqlExpression = "EXEC ProcedureShowChiefs @Id";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@Id", id));

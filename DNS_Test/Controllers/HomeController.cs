@@ -52,11 +52,11 @@ namespace DNS_Test.Controllers
             return PartialView(result);
         }
         [HttpPost]
-        public IActionResult ShowSubordinates(int Id)
+        public IActionResult ShowChiefs(int Id)
         {
-            _logger.LogInformation("Requesting subordinates of №{0} employee", Id);
-            List<Employee> result = context.ShowSubordinates(Id);
-            _logger.LogInformation("Return {0} subordinates", result.Count);
+            _logger.LogInformation("Requesting chain of chiefs of №{0} employee", Id);
+            List<Employee> result = context.ShowChiefs(Id);
+            _logger.LogInformation("Return {0} chiefs", result.Count);
             return PartialView(result);
         }
         [HttpGet]
