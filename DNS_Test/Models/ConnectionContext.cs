@@ -33,7 +33,7 @@ namespace DNS_Test.Models
                     Name = Convert.ToString(reader["Department"])
                 };
             }
-            if (reader["ChiefId"] != DBNull.Value)
+            if (reader["Chief"] != DBNull.Value)
             {
                 adding.Chief = new Employee
                 {

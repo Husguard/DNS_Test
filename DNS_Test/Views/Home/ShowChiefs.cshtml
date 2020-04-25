@@ -40,7 +40,7 @@
                     @Html.DisplayFor(modelItem => item.Date)
                 </td>
                 <td>
-                    @if (item.Chief.Name == "")
+                    @if (item.Chief == null)
                     {
                         @Html.Label("Отсутствует");
                     }

@@ -3,9 +3,6 @@ a.navbar-brand {
     text-align: center;
     word-break: break-all;
 }
-a {
-    color: #0366d6;
-}
 
 .btn-primary {
     color: #fff;
@@ -148,6 +145,11 @@ body {
     width: 270px;
     line-height: 20px;
     margin: 30px 0;
+}
+#suggests a{
+    color: #0366d6;
+    display: block;
+}
 }
 .text-danger {
     color: red;
