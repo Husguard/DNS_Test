@@ -48,7 +48,11 @@ CREATE PROCEDURE [dbo].[ProcedureAddEmployee]
 AS
 	 INSERT INTO Employees(Name,Department,Post,Chief, Date) VALUES(@Name, @Department, @Post, @Chief, @Date)
 GO
-
+CREATE PROCEDURE [dbo].[ProcedureAddDepartment]
+	@name NVARCHAR(40)
+AS
+	INSERT INTO Departments(Name) VALUES(@name)
+GO
 CREATE PROCEDURE [dbo].[ProcedureDeleteEmployee]
     @Id INT
 AS
