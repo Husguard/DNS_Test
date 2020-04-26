@@ -25,6 +25,10 @@
                 </select>
             </div>
         </form>
+        <form asp-action="AddDepartment" asp-controller="Home" data-ajax-method="POST" data-ajax="true" data-ajax-update="#resultOf">
+            <input type="text" name="departmentName" required />
+            <button type="submit" class="btn btn-danger" onclick="ShowSuccess()">Добавить отдел</button>
+        </form>
         <button id="addButton" class="btn btn-primary" type="submit">Добавить сотрудника</button>
         <div id="mainEmployees"></div>
         <div id="modal" class="message-wrapper" style="display:none">
@@ -33,4 +37,3 @@
             </div>
         </div>
     </div>
-    

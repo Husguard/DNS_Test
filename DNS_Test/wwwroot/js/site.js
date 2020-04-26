@@ -1,5 +1,5 @@
 ﻿"use strict";
-var selectedId = undefined;
+let selectedId = undefined;
 function GetPages() {
     $.ajax({
         url: '/Home/GetPage',
@@ -12,7 +12,7 @@ function GetPages() {
     $("#Show").submit();
 }
 function AddEmployee() {
-    var output = $('#resultOf');
+    let output = $('#resultOf');
     $("#resultOf").empty();
     $.ajax({
         url: '/Home/AddEmployee',
@@ -26,6 +26,7 @@ function AddEmployee() {
         }
     });
 }
+// крч метод создающий верстку форму для добавления отдела
 function ShowSuggests(e) {
     $("#suggests").empty();
     $("#suggests").hide();
@@ -35,8 +36,8 @@ function ShowSuggests(e) {
             type: 'POST',
             data: { name: e.value },
             success: function (json) {
-                for (var i = 0; i < json.length; i++) {
-                    var btnShow = document.createElement('a');
+                for (let i = 0; i < json.length; i++) {
+                    let btnShow = document.createElement('a');
                     btnShow.innerText = json[i];
                     btnShow.addEventListener('click', function () {
                         $("#Chief_Name").val(this.innerText);
@@ -49,30 +50,31 @@ function ShowSuggests(e) {
         });
     }
 }
-$(document).on('click', ".table tbody tr", function () { // криво
+$(document).on('click', ".table tbody tr", function () {
     if (selectedId != undefined) {
         selectedId.parent().find("tr").removeClass("selected_row");
         selectedId.parent().find("#buttonSection").remove();
     }
     selectedId = $(this);
     selectedId.toggleClass("selected_row");
-    var btnSection = document.createElement('div');
+    let btnSection = document.createElement('div');
     btnSection.id = "buttonSection";
-    var btnShowChiefs = createButton('Руководители', '/Home/ShowChiefs', 'POST');
-    var btnDel = createButton('Удалить сотрудника', '/Home/DeleteEmployee', 'GET');
+    let btnShowChiefs = createButton('Руководители', '/Home/ShowChiefs', 'POST');
+    let btnDel = createButton('Удалить сотрудника', '/Home/DeleteEmployee', 'GET');
     btnSection.append(btnShowChiefs, btnDel);
     $(this).children().last().append(btnSection);
 });
 function createButton(innerText, url, method) {
-    var btn = document.createElement('button');
+    let btn = document.createElement('button');
     btn.innerText = innerText;
     btn.className = 'btn btn-primary';
     btn.addEventListener('click', function () {
-        var output = $('#resultOf');
+        let output = $('#resultOf');
+    //    alert(`Проверяем ${typeof (selectedId)}`);
         $.ajax({
             url: url,
             type: method,
-            data: { id: window.selectedId.find('#number').text() },
+            data: { id: selectedId.find('#number').text() },
             success: function (json) {
                 output.html(json);
                 $("#modal").show();
@@ -85,7 +87,7 @@ function createButton(innerText, url, method) {
     return btn;
 }
 function ShowSuccess() {
-    selectedId.remove();
+    $("#modal").show();
     setTimeout(function () {
         $("#modal").hide();
     }, 2000);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using DNS_Test.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace DNS_Test.Controllers
 {
@@ -13,10 +14,10 @@ namespace DNS_Test.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ConnectionContext context;
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ConnectionContext connectionContext)
         {
             _logger = logger;
-            context = new ConnectionContext();
+            context = connectionContext;
         }
 
         public IActionResult Index()
@@ -87,6 +88,13 @@ namespace DNS_Test.Controllers
             context.DeleteEmployee(model.Id);
             _logger.LogInformation("ID {0} Employee and all references to him is deleted", model.Id);
             return Json("Сотрудник успешно удален");
+        }
+        [HttpPost]
+        public JsonResult AddDepartment(string departmentName)
+        {
+            context.AddDepartment(departmentName);
+            _logger.LogInformation("Department is Added");
+            return Json("Отдел добавлен");
         }
     }
 }

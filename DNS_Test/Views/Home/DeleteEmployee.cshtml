@@ -50,7 +50,7 @@
                 <dd>
                     <form asp-action="DeleteEmployee" asp-controller="Home" data-ajax-method="POST" data-ajax="true" data-ajax-update="#resultOf">
                         <input type="number" value="@Model.Id" name="Id" hidden />
-                        <button type="submit" class="btn btn-danger" onclick="ShowSuccess()">Удалить</button>
+                        <button type="submit" class="btn btn-danger" onclick="{ShowSuccess();selectedId.remove();}">Удалить</button>
                     </form>
                 </dd>
             </dl>

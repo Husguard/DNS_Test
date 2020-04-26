@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,10 +12,12 @@ namespace DNS_Test.Models
         private SqlDataReader reader;
         private List<Employee> employees;
         private List<Department> departments;
+        private readonly IMemoryCache cache;
         private readonly string connectionName;
-        public ConnectionContext()
+        public ConnectionContext(IMemoryCache memoryCache)
         {
             connectionName = "Server = (localdb)\\mssqllocaldb; Database = EmployeesDB; Trusted_Connection = True;";
+            cache = memoryCache;
         }
         private Employee CreateEmployee(SqlDataReader reader)
         {
@@ -62,7 +65,12 @@ namespace DNS_Test.Models
                     {
                         while (reader.Read())
                         {
-                            employees.Add(CreateEmployee(reader));
+                            Employee employee = CreateEmployee(reader);
+                            employees.Add(employee);
+                            cache.Set(employee.Id, employee, new MemoryCacheEntryOptions
+                            {
+                                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                            });
                         }
                     }
                 }
@@ -94,7 +102,7 @@ namespace DNS_Test.Models
         }
         public int GetPage(int pages)
         {
-            int value = 0;
+            int value;
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -109,6 +117,20 @@ namespace DNS_Test.Models
                 }
                 connection.Close();
                 return value;
+            }
+        }
+        public void AddDepartment(string departmentName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureAddDepartment @name";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", departmentName));
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
             }
         }
         public List<Department> GetDepartments()
@@ -163,7 +185,7 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Name", adding.Name));
                     command.Parameters.Add(new SqlParameter("@Post", adding.Post));
                     command.Parameters.Add(new SqlParameter("@Department", adding.Department.Id));
-                    command.Parameters.Add(new SqlParameter("@Chief", adding.Chief.Name == null ? (object)DBNull.Value : adding.Chief.Id));
+                    command.Parameters.Add(new SqlParameter("@Chief", adding.Chief == null ? (object)DBNull.Value : adding.Chief.Id));
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
                     command.ExecuteNonQuery();
                 }
@@ -208,12 +230,8 @@ namespace DNS_Test.Models
         }
         public Employee FindEmployee(int id)
         {
-            Employee adding = new Employee();
-            if(employees != null) // массив обнуляется всегда
-            {
-                return employees.Where(x => x.Id == id).ToArray()[0];
-            }
-            else
+            Employee adding;
+            if (!cache.TryGetValue(id, out adding))
             {
                 using (SqlConnection connection = new SqlConnection(connectionName))
                 {
