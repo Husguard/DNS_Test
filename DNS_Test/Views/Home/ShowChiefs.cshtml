@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<DNS_Test.Models.Employee>
+    <div class="head">
+        <h4>Иерархия руководства</h4>
+        <button id="closeButton" class="btn btn-primary">Закрыть</button>
+        Количество: @Model.Count()
+    </div>
 <table>
     <thead>
         <tr>
@@ -19,10 +24,6 @@
             </th>
         </tr>
     </thead>
-    <tr>
-        Количество: @Model.Count()
-        <button id="closeButton" class="btn btn-primary">Закрыть</button>
-    </tr>
     <tbody>
         @foreach (var item in Model)
         {

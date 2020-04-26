@@ -4,66 +4,35 @@
             <h4>Добавить сотрудника</h4>
             <button id="closeButton" class="btn btn-primary">Закрыть</button>
         </div>
-        <form asp-action="AddEmployee">
-            <table>
+        <form class="form-add" asp-action="AddEmployee">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <tr>
-                    <td>
-                        <label asp-for="Name" class="control-label"></label>
-                    </td>
-                    <td>
-                        <input asp-for="Name" class="form-control" />
-                    </td>
-                    <td>
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label asp-for="Department" class="control-label"></label>
-                    </td>
-                    <td>
-                        @Html.DropDownList("Department.Id", ViewBag.Departments as SelectList, new { id = "Department_Id" })
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>
-                        <label asp-for="Post" class="control-label"></label>
-                    </td>
-                    <td>
-                        <input asp-for="Post" class="form-control" />
-                    </td>
-                    <td>
-                        <span asp-validation-for="Post" class="text-danger"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label asp-for="Chief" class="control-label"></label>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <input id="Chief_Name" name="Chief.Name" type="text" class="form-control" oninput="ShowSuggests(this)" />
-                            <div id="suggests" style="display: none;"></div>
-                        </div>
-                    </td>
-                    <td>
-                        <span asp-validation-for="Chief.Name" class="text-danger"></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label asp-for="Date" class="control-label"></label>
-                    </td>
-                    <td>
-                        <input type="date" asp-for="Date" class="form-control" />
-                    </td>
-                    <td>
-                        <span asp-validation-for="Date" class="text-danger"></span>
-                    </td>
-                </tr>
-            </table>
+                <div>          
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div>
+                    <label asp-for="Department" class="control-label"></label>
+                    @Html.DropDownList("Department.Id", ViewBag.Departments as SelectList, new { id = "Department_Id", @class = "form-control"})
+                </div>
+                <div>
+                    <label asp-for="Post" class="control-label"></label>
+                    <input asp-for="Post" class="form-control" />
+                    <span asp-validation-for="Post" class="text-danger"></span>
+                </div>
+                <div>
+                    <label asp-for="Chief" class="control-label"></label>
+                    <div class="form-group">
+                        <input id="Chief_Name" name="Chief.Name" type="text" class="form-control" oninput="ShowSuggests(this)" />
+                        <div id="suggests" style="display: none;"></div>
+                    </div>
+                    <span asp-validation-for="Chief.Name" class="text-danger"></span>
+                </div>
+                <div>
+                    <label asp-for="Date" class="control-label"></label>
+                    <input type="date" asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
             <div class="form-group">
                 <input type="submit" value="Добавить" class="btn btn-primary" />
             </div>

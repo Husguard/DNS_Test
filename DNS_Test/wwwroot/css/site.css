@@ -116,13 +116,6 @@ body {
     border-radius: 8px;
     display: inline;
 }
-
-    .message .form-group {
-        display: grid;
-        width: 250px;
-        line-height: 30px;
-    }
-
     .message h4 {
         text-align: center;
     }
@@ -154,3 +147,18 @@ body {
 .text-danger {
     color: red;
 }
+.form-add{
+    width: 670px;
+}
+    .form-add .form-group {
+        display: inline;
+    }
+    .form-add .control-label {
+        width: 20%;
+        display: inline-block;
+    }
+
+    .form-add .form-control {
+        width: 40%;
+        display: inline-block;
+    }
