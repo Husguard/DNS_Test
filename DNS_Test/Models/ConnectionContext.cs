@@ -16,9 +16,51 @@ namespace DNS_Test.Models
         public ConnectionContext()
         {
             connectionName = "Server = (localdb)\\mssqllocaldb; Database = EmployeesDB; Trusted_Connection = True;";
-            // можно сделать так: создать класс, импортирующий все записи при запуске, затем через только запросы менять состояние локального листа
-            // по окончании операций сохранять изменения
-            // то есть все методы здесь будут работать только с локальным листом, а при изменении его вызывать новый класс для подключения бд
+            employees = DownloadEmployees();
+            departments = DownloadDepartments();
+        }
+        private List<Employee> DownloadEmployees()
+        {
+            employees = new List<Employee>();
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureGetAllEmployees";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Employee employee = CreateEmployee(reader);
+                            employees.Add(employee);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return employees;
+        }
+        private List<Department> DownloadDepartments()
+        {
+            departments = new List<Department>();
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureGetDepartments";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            departments.Add(new Department() { Id = Convert.ToInt32(reader["Id"]), Name = Convert.ToString(reader["Name"]) });
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return departments;
         }
         private Employee CreateEmployee(SqlDataReader reader)
         {
@@ -49,39 +91,8 @@ namespace DNS_Test.Models
         }
         public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
         {
-            if (true) // при изменении страницы и столбца нужны новые данные
-            {
-                employees = new List<Employee>();
-                string columnName = column ? "F.Name" : "Department";
-                string sortName = sort ? "ASC" : "DESC";
-                using (SqlConnection connection = new SqlConnection(connectionName))
-                {
-                    connection.Open();
-                    string sqlExpression = "EXEC ProcedureShowPageOfEmployees @page, @selected, @sort, @column";
-                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
-                    {
-                        command.Parameters.Add(new SqlParameter("@page", page));
-                        command.Parameters.Add(new SqlParameter("@selected", selected));
-                        command.Parameters.Add(new SqlParameter("@column", columnName));
-                        command.Parameters.Add(new SqlParameter("@sort", sortName));
-                        using (reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Employee employee = CreateEmployee(reader);
-                                employees.Add(employee);
-                            }
-                        }
-                    }
-                    connection.Close();
-                }
-            }
-            else // сортировка только в рамках ВЫБРАННЫХ данных(ЗАГРУЖЕНЫ ЛИ ОСТАЛЬНЫЕ ДАННЫЕ ВЛИЯЕТ НА ОБЩИЙ РЕЗУЛЬТАТ) - тоесть смысла не имеет
-            {
-                if (sort) return employees.GetRange(page * selected, selected).OrderBy(x => column ? x.Name : x.Department.Name).ToList();
-                else return employees.GetRange(page * selected, selected).OrderByDescending(x => column ? x.Name : x.Department.Name).ToList();
-            }
-            return employees;
+            if (sort) return employees.OrderBy(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
+            else return employees.OrderByDescending(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
         }
         public List<string> GetSuggests(string name)
         {
@@ -105,24 +116,9 @@ namespace DNS_Test.Models
             }
             return employees;
         }
-        public int GetPage(int pages)
+        public int GetPage(int selected)
         {
-            int value;
-            using (SqlConnection connection = new SqlConnection(connectionName))
-            {
-                connection.Open();
-                string sqlExpression = "SELECT COUNT(*) AS Count FROM Employees";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
-                {
-                    using (reader = command.ExecuteReader())
-                    {
-                        reader.Read();
-                        value = (int)Math.Ceiling(Convert.ToDecimal(reader["Count"]) / pages);
-                    }
-                }
-                connection.Close();
-                return value;
-            }
+            return (int)Math.Ceiling((decimal)employees.Count / selected);
         }
         public void AddDepartment(string departmentName)
         {
@@ -137,29 +133,10 @@ namespace DNS_Test.Models
                 }
                 connection.Close();
             }
+            departments = DownloadDepartments(); // ID нового неизвестен
         }
         public List<Department> GetDepartments()
         {
-            if (departments == null)
-            {
-                departments = new List<Department>();
-                using (SqlConnection connection = new SqlConnection(connectionName))
-                {
-                    connection.Open();
-                    string sqlExpression = "EXEC ProcedureGetDepartments";
-                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
-                    {
-                        using (reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                departments.Add(new Department() { Id = Convert.ToInt32(reader["Id"]), Name = Convert.ToString(reader["Name"]) });
-                            }
-                        }
-                    }
-                    connection.Close();
-                }
-            }
             return departments;
         }
         public void AddEmployee(Employee adding)
@@ -196,10 +173,12 @@ namespace DNS_Test.Models
                 }
                 connection.Close();
             }
+            adding.Department = departments.Find(x => x.Id == adding.Department.Id); // имя отдела не передаётся вместе с данными от формы
+            employees.Add(adding);
+            DownloadEmployees(); // ID нового неизвестен
         }
         public void DeleteEmployee(int id)
         {
-            employees.Remove(employees.Find(x => x.Id == id));
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -211,7 +190,7 @@ namespace DNS_Test.Models
                 }
                 connection.Close();
             }
-            
+            employees.Remove(employees.Find(x => x.Id == id));
         }
         public List<Employee> ShowChiefs(int id)
         {
