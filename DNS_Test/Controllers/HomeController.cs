@@ -48,7 +48,7 @@ namespace DNS_Test.Controllers
         public IActionResult ShowEmployees(int page, int selected, bool sort, bool column)
         {
             _logger.LogInformation("Requesting №{0} page of employees, size {1}", page, selected);
-            List<Employee> result = context.GetEmployees(page - 1, selected, sort, column).ToList();
+            List<Employee> result = context.GetEmployees(page - 1, selected, sort, column);
             _logger.LogInformation("Return page of employees size {0}", result.Count);
             return PartialView(result);
         }

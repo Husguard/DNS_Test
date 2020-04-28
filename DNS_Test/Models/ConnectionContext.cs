@@ -12,12 +12,13 @@ namespace DNS_Test.Models
         private SqlDataReader reader;
         private List<Employee> employees;
         private List<Department> departments;
-        private readonly IMemoryCache cache;
         private readonly string connectionName;
-        public ConnectionContext(IMemoryCache memoryCache)
+        public ConnectionContext()
         {
             connectionName = "Server = (localdb)\\mssqllocaldb; Database = EmployeesDB; Trusted_Connection = True;";
-            cache = memoryCache;
+            // можно сделать так: создать класс, импортирующий все записи при запуске, затем через только запросы менять состояние локального листа
+            // по окончании операций сохранять изменения
+            // то есть все методы здесь будут работать только с локальным листом, а при изменении его вызывать новый класс для подключения бд
         }
         private Employee CreateEmployee(SqlDataReader reader)
         {
@@ -48,33 +49,37 @@ namespace DNS_Test.Models
         }
         public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
         {
-            string columnName = column ? "F.Name" : "Department";
-            string sortName = sort ? "ASC" : "DESC";
-            employees = new List<Employee>();
-            using (SqlConnection connection = new SqlConnection(connectionName))
+            if (true) // при изменении страницы и столбца нужны новые данные
             {
-                connection.Open();
-                string sqlExpression = "EXEC ProcedureShowPageOfEmployees @page, @selected, @sort, @column";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                employees = new List<Employee>();
+                string columnName = column ? "F.Name" : "Department";
+                string sortName = sort ? "ASC" : "DESC";
+                using (SqlConnection connection = new SqlConnection(connectionName))
                 {
-                    command.Parameters.Add(new SqlParameter("@page", page));
-                    command.Parameters.Add(new SqlParameter("@selected", selected));
-                    command.Parameters.Add(new SqlParameter("@column", columnName));
-                    command.Parameters.Add(new SqlParameter("@sort", sortName));
-                    using (reader = command.ExecuteReader())
+                    connection.Open();
+                    string sqlExpression = "EXEC ProcedureShowPageOfEmployees @page, @selected, @sort, @column";
+                    using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                     {
-                        while (reader.Read())
+                        command.Parameters.Add(new SqlParameter("@page", page));
+                        command.Parameters.Add(new SqlParameter("@selected", selected));
+                        command.Parameters.Add(new SqlParameter("@column", columnName));
+                        command.Parameters.Add(new SqlParameter("@sort", sortName));
+                        using (reader = command.ExecuteReader())
                         {
-                            Employee employee = CreateEmployee(reader);
-                            employees.Add(employee);
-                            cache.Set(employee.Id, employee, new MemoryCacheEntryOptions
+                            while (reader.Read())
                             {
-                                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
-                            });
+                                Employee employee = CreateEmployee(reader);
+                                employees.Add(employee);
+                            }
                         }
                     }
+                    connection.Close();
                 }
-                connection.Close();
+            }
+            else // сортировка только в рамках ВЫБРАННЫХ данных(ЗАГРУЖЕНЫ ЛИ ОСТАЛЬНЫЕ ДАННЫЕ ВЛИЯЕТ НА ОБЩИЙ РЕЗУЛЬТАТ) - тоесть смысла не имеет
+            {
+                if (sort) return employees.GetRange(page * selected, selected).OrderBy(x => column ? x.Name : x.Department.Name).ToList();
+                else return employees.GetRange(page * selected, selected).OrderByDescending(x => column ? x.Name : x.Department.Name).ToList();
             }
             return employees;
         }
@@ -194,6 +199,7 @@ namespace DNS_Test.Models
         }
         public void DeleteEmployee(int id)
         {
+            employees.Remove(employees.Find(x => x.Id == id));
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -205,6 +211,7 @@ namespace DNS_Test.Models
                 }
                 connection.Close();
             }
+            
         }
         public List<Employee> ShowChiefs(int id)
         {
@@ -230,8 +237,8 @@ namespace DNS_Test.Models
         }
         public Employee FindEmployee(int id)
         {
-            Employee adding;
-            if (!cache.TryGetValue(id, out adding))
+            Employee adding = employees.Find(x => x.Id == id);
+            if (adding == null)
             {
                 using (SqlConnection connection = new SqlConnection(connectionName))
                 {

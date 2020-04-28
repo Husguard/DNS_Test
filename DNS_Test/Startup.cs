@@ -25,7 +25,7 @@ namespace DNS_Test
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ConnectionContext>();
+            services.AddSingleton<ConnectionContext>();
             services.AddMemoryCache();
             services.AddControllersWithViews();
         }
