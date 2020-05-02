@@ -167,7 +167,8 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Name", adding.Name));
                     command.Parameters.Add(new SqlParameter("@Post", adding.Post));
                     command.Parameters.Add(new SqlParameter("@Department", adding.Department.Id));
-                    command.Parameters.Add(new SqlParameter("@Chief", adding.Chief == null ? (object)DBNull.Value : adding.Chief.Id));
+                    command.Parameters.Add(new SqlParameter("@Chief", adding.Chief.Id == 0 ? (object)DBNull.Value : adding.Chief.Id));
+                    // начальник приходит инициализированным из-за взаимодействия с name свойством.
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
                     command.ExecuteNonQuery();
                 }

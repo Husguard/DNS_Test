@@ -1,4 +1,4 @@
-﻿"use strict";
+﻿//"use strict";
 let selectedId = undefined;
 function GetPages() {
     $.ajax({
