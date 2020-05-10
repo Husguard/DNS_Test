@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNS_Test", "DNS_Test\DNS_Test.csproj", "{08C13155-86C3-4EFC-A80D-628330B4E0D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DNS_Test", "DNS_Test\DNS_Test.csproj", "{08C13155-86C3-4EFC-A80D-628330B4E0D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DNS_Test.Tests", "DNS_Test.Tests\DNS_Test.Tests.csproj", "{959F5614-C67D-46AC-9741-16D1A818EEA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{08C13155-86C3-4EFC-A80D-628330B4E0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08C13155-86C3-4EFC-A80D-628330B4E0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08C13155-86C3-4EFC-A80D-628330B4E0D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{959F5614-C67D-46AC-9741-16D1A818EEA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{959F5614-C67D-46AC-9741-16D1A818EEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{959F5614-C67D-46AC-9741-16D1A818EEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{959F5614-C67D-46AC-9741-16D1A818EEA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

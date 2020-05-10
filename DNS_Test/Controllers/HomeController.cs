@@ -7,28 +7,30 @@ using Microsoft.Extensions.Logging;
 using DNS_Test.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace DNS_Test.Controllers
 {
     public class HomeController : Controller
     {
+        // [OutputCache (Duration=360)][ValidateAntiForgeryToken] async Task<IActionResult>
         private readonly ILogger<HomeController> _logger;
-        private readonly ConnectionContext context;
-        public HomeController(ILogger<HomeController> logger, ConnectionContext connectionContext)
+        private readonly EmployeesContext context; // этот класс должен хранить все методы, которые нужны для работы с работниками
+        public HomeController(ILogger<HomeController> logger, EmployeesContext connectionContext)
         {
             _logger = logger;
             context = connectionContext;
         }
-
+        [ResponseCache(CacheProfileName = "Caching")]
         public IActionResult Index()
         {
             _logger.LogInformation("Downloading /Home/Index");
             return View();
         }
-        public JsonResult GetPage(int pages)
+        public JsonResult GetCountOfPages(int selected)
         {
             _logger.LogInformation("Requesting number of pages in database");
-            int value = context.GetPage(pages);
+            int value = context.GetCountOfPages(selected);
             _logger.LogInformation("Return number of pages: {0}", value);
             return Json(value);
         }
@@ -40,11 +42,11 @@ namespace DNS_Test.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(Exception exception)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); // почему такой порядок??
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ExceptionDescription = exception.Message }); // почему такой порядок??
         }
-        [HttpGet]
+        [ResponseCache(CacheProfileName = "NoCaching")][HttpGet]
         public IActionResult ShowEmployees(int page, int selected, bool sort, bool column)
         {
             _logger.LogInformation("Requesting №{0} page of employees, size {1}", page, selected);
@@ -92,7 +94,7 @@ namespace DNS_Test.Controllers
         [HttpPost]
         public JsonResult AddDepartment(string departmentName)
         {
-            context.AddDepartment(departmentName);
+       //     context.AddDepartment(departmentName);
             _logger.LogInformation("Department is Added");
             return Json("Отдел добавлен");
         }
