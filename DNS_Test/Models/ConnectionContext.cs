@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DNS_Test.Models
 {
-    public class ConnectionContext : IDbContext
+    public class ConnectionContext : IContext
     {
         private SqlDataReader reader;
         private readonly string connectionName;
@@ -36,41 +36,9 @@ namespace DNS_Test.Models
             }
             return employees;
         }
-        public List<string> GetSuggests(string name)
+        public List<Department> GetDepartments() // плохо - downloaddepartments и getdepartments это один и тот же метод
         {
-            List<string> employees = new List<string>();
-            using (SqlConnection connection = new SqlConnection(connectionName))
-            {
-                connection.Open();
-                string sqlExpression = "EXEC ProcedureGetSuggests @name";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
-                {
-                    command.Parameters.Add(new SqlParameter("@name", name));
-                    using (reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            employees.Add(reader["Name"].ToString());
-                        }
-                    }
-                }
-                connection.Close();
-            }
-            return employees;
-        }
-        public void AddDepartment(string departmentName)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionName))
-            {
-                connection.Open();
-                string sqlExpression = "EXEC ProcedureAddDepartment @name";
-                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
-                {
-                    command.Parameters.Add(new SqlParameter("@name", departmentName));
-                    command.ExecuteNonQuery();
-                }
-                connection.Close();
-            }
+            return DownloadDepartments();
         }
         public List<Department> DownloadDepartments()
         {
@@ -93,6 +61,89 @@ namespace DNS_Test.Models
             }
             return departments;
         }
+        public List<string> GetSuggests(string name)
+        {
+            List<string> employees = new List<string>();
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureGetSuggests @name";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", name));
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            employees.Add(reader["Name"].ToString());
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return employees;
+        }
+        public int GetCountOfPages(int selected)
+        {
+            int value = 0;
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "SELECT Count(*) FROM Employees";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            value = Convert.ToInt32(reader[0]);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return (int)Math.Ceiling((decimal)value / selected);
+        }
+        public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
+        {
+            List<Employee> employees = new List<Employee>();
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureShowPageOfEmployees @page, @selected, @sort, @column";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@page", page));
+                    command.Parameters.Add(new SqlParameter("@selected", selected));
+                    command.Parameters.Add(new SqlParameter("@sort", sort ? "ASC" : "DESC"));
+                    command.Parameters.Add(new SqlParameter("@column", column ? "F.Name" : "Departments"));
+                    using (reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            employees.Add(CreateEmployee(reader));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return employees;
+        }
+        public void AddDepartment(string departmentName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionName))
+            {
+                connection.Open();
+                string sqlExpression = "EXEC ProcedureAddDepartment @name";
+                using (SqlCommand command = new SqlCommand(sqlExpression, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("@name", departmentName));
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+        
         public void AddEmployee(Employee adding)
         {
             using (SqlConnection connection = new SqlConnection(connectionName))

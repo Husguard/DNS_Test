@@ -8,7 +8,14 @@ using System.Linq;
 using System;
 using DNS_Test.Models;
 using DNS_Test.Controllers;
-// нужно сделать: модель настроек, интерфейсы подходящие(для этого нужно создать один единый интерфейс и два класса(БД и локалька) взаимодействия)
+
+// ситуация такова, что локалка должна знать и о локальных методах взаимодейтсвия и о синхронизации с БД, поэтому распределение по idownloader не нужно
+
+// КАТЕГОРИИ??? по взятию/изменению/удалению интерфейсы
+
+// сделать getchiefs локальным, для этого нужны присвоить ссылки в локальном листе, и поиск иерархии для выбранного
+
+// юнит тестирование, разбор middleware, куки аутентификация
 namespace UnitTestApp.Tests
 {
     public class HomeControllerTests
@@ -17,7 +24,7 @@ namespace UnitTestApp.Tests
         public void IndexReturnsAViewResultWithAListOfUsers()
         {
             // Arrange
-            var mock = new Mock<IDbContext>();
+            var mock = new Mock<IContext>();
             mock.Setup(repo => repo.DownloadEmployees()).Returns(GetTestUsers());
             var controller = new EmployeesContext(mock.Object);
 

@@ -15,8 +15,8 @@ namespace DNS_Test.Controllers
     {
         // [OutputCache (Duration=360)][ValidateAntiForgeryToken] async Task<IActionResult>
         private readonly ILogger<HomeController> _logger;
-        private readonly EmployeesContext context; // этот класс должен хранить все методы, которые нужны для работы с работниками
-        public HomeController(ILogger<HomeController> logger, EmployeesContext connectionContext)
+        private readonly IContext context; // этот класс должен хранить все методы, которые нужны для работы с работниками
+        public HomeController(ILogger<HomeController> logger, IContext connectionContext)
         {
             _logger = logger;
             context = connectionContext;

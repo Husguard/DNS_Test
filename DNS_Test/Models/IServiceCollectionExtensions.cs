@@ -13,7 +13,7 @@ namespace DNS_Test.Models
     {
         public static IServiceCollection AddInitializingServices(this IServiceCollection services)
         {
-            services.AddSingleton<EmployeesContext>(); // не опасно ли при множестве запросов?
+            services.AddSingleton<IContext,EmployeesContext>(); // не опасно ли при множестве запросов?
             services.AddResponseCompression(options => options.EnableForHttps = true);
 
             services.AddControllersWithViews(options =>

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DNS_Test.Models
 {
-    public interface ICRUD
+    public interface IEmployees
     {
         void AddEmployee(Employee adding);
         void DeleteEmployee(int id);

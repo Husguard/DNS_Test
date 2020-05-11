@@ -7,25 +7,34 @@ using System.Linq;
 
 namespace DNS_Test.Models
 {
-    public class EmployeesContext : IEmployeesCRD
+    public class EmployeesContext : IContext
     {
         private List<Employee> employees;
         private List<Department> departments;
-        private readonly IDbContext connection;
+        private readonly IContext connection; // это БД, с которой локалка синхронизируется
         public EmployeesContext()
         {
             connection = new ConnectionContext(); // по хорошему такие вещи создаются в middleware, чтобы класс не знал что именно ему нужно
             departments = connection.DownloadDepartments();
             employees = connection.DownloadEmployees();
-            // сделать модели для всех инпутов, таким образом сделать модель настроек и вставить в представления
         }
         public IEnumerable<Employee> Test()
         {
             return new List<Employee>();
         }
+        public List<Employee> DownloadEmployees()
+        {
+            employees = connection.DownloadEmployees();
+            return employees;
+        }
+        public List<Department> DownloadDepartments()
+        {
+            departments = connection.DownloadDepartments();
+            return departments;
+        }
         public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
         {
-            if (page * selected > employees.Count) page = 0; // грубая валидация
+            if (page * selected > employees.Count) page = 0; // грубое исправление
             if (sort) return employees.OrderBy(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
             else return employees.OrderByDescending(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
         }
@@ -38,7 +47,11 @@ namespace DNS_Test.Models
         {
             return connection.GetSuggests(name);
         }
-
+        public void AddDepartment(string departmentName)
+        {
+            connection.AddDepartment(departmentName);
+            // ID нового отдела неизвестен(решаемо загрузкой снова)
+        }
         public List<Department> GetDepartments()
         {
             return departments;
