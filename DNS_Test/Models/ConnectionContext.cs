@@ -67,7 +67,7 @@ namespace DNS_Test.Models
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "EXEC ProcedureGetSuggests @name";
+                string sqlExpression = "EXEC ProcedureGetEmployeeByName @name";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@name", name));
@@ -146,13 +146,14 @@ namespace DNS_Test.Models
         
         public void AddEmployee(Employee adding)
         {
+            // этот запрос можно исправить, если getsuggets будет возвращать employee
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
                 string sqlExpression;
                 if (adding.Chief.Name != null)
                 {
-                    sqlExpression = "EXEC ProcedureGetSuggests @name";
+                    sqlExpression = "EXEC ProcedureGetEmployeeByName @name";
                     using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                     {
                         command.Parameters.Add(new SqlParameter("@name", adding.Chief.Name));
@@ -222,7 +223,7 @@ namespace DNS_Test.Models
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
-                string sqlExpression = "EXEC ProcedureFindEmployee @Id";
+                string sqlExpression = "EXEC ProcedureGetEmployeeById @Id";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@Id", id));

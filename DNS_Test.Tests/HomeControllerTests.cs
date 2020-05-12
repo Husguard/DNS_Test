@@ -13,9 +13,7 @@ using DNS_Test.Controllers;
 
 // КАТЕГОРИИ??? по взятию/изменению/удалению интерфейсы
 
-// сделать getchiefs локальным, для этого нужны присвоить ссылки в локальном листе, и поиск иерархии для выбранного
-
-// юнит тестирование, разбор middleware, куки аутентификация
+// юнит тестирование, разбор middleware, куки аутентификация, выяснение новых ID
 namespace UnitTestApp.Tests
 {
     public class HomeControllerTests
@@ -25,16 +23,15 @@ namespace UnitTestApp.Tests
         {
             // Arrange
             var mock = new Mock<IContext>();
-            mock.Setup(repo => repo.DownloadEmployees()).Returns(GetTestUsers());
-            var controller = new EmployeesContext(mock.Object);
+            mock.Setup(repo => repo.DownloadEmployees()).Returns(new ConnectionContext().DownloadEmployees());
+            var controller = new HomeController(mock.Object);
 
             // Act
-            var result = controller.GetDepartments();
+            var result = controller.ShowChiefs(2);
 
             // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<Employee>>(
-                viewResult.Model);
+            var viewResult = Assert.IsType<PartialViewResult>(result);
+            var model = Assert.IsAssignableFrom<List<Employee>>(viewResult.Model);
             Assert.Equal(GetTestUsers().Count, model.Count());
         }
         private List<Employee> GetTestUsers()

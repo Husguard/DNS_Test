@@ -94,7 +94,7 @@ namespace DNS_Test.Controllers
         [HttpPost]
         public JsonResult AddDepartment(string departmentName)
         {
-       //     context.AddDepartment(departmentName);
+            context.AddDepartment(departmentName);
             _logger.LogInformation("Department is Added");
             return Json("Отдел добавлен");
         }

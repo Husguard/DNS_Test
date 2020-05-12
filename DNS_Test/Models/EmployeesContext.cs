@@ -11,12 +11,13 @@ namespace DNS_Test.Models
     {
         private List<Employee> employees;
         private List<Department> departments;
-        private readonly IContext connection; // это БД, с которой локалка синхронизируется
+        private readonly IContext connection; // это БД, с которой локалка синхронизируется, методы бд работают как подстраховка, если в локалке нет
         public EmployeesContext()
         {
             connection = new ConnectionContext(); // по хорошему такие вещи создаются в middleware, чтобы класс не знал что именно ему нужно
             departments = connection.DownloadDepartments();
             employees = connection.DownloadEmployees();
+            
         }
         public IEnumerable<Employee> Test()
         {
@@ -25,6 +26,7 @@ namespace DNS_Test.Models
         public List<Employee> DownloadEmployees()
         {
             employees = connection.DownloadEmployees();
+            UpdateReferences();
             return employees;
         }
         public List<Department> DownloadDepartments()
@@ -45,7 +47,13 @@ namespace DNS_Test.Models
         }
         public List<string> GetSuggests(string name)
         {
-            return connection.GetSuggests(name);
+            List<string> suggests = new List<string>();
+            List<Employee> linq = employees.Where(x => x.Name.StartsWith(name, true, null)).ToList(); // нужно игнорирование регистра, мб тело функции??
+            foreach(Employee employee in linq)
+            {
+                suggests.Add(employee.Name);
+            }
+            return suggests;
         }
         public void AddDepartment(string departmentName)
         {
@@ -60,9 +68,25 @@ namespace DNS_Test.Models
         {
             connection.AddEmployee(adding);
             adding.Department = departments.Find(x => x.Id == adding.Department.Id); // имя отдела не передаётся вместе с данными от формы
-            employees.Add(adding);
-            connection.DownloadEmployees(); // ID нового неизвестен
+            adding.Chief = employees.Find(x => x.Id == adding.Chief.Id);
+            employees.Add(adding);  // ID нового неизвестен, как решить проблему определения ID новой записи
+            connection.DownloadEmployees();
             // можно искать в бд нового добавленного и добавлять его
+        }
+        private void UpdateReferences()
+        {
+            foreach(Employee employee in employees)
+            {
+                if(employee.Chief != null)
+                {
+                    Employee select = employees.Find(x => x.Id == employee.Chief.Id);
+                    employee.Chief = select;
+                    while (select.Chief != null)
+                    {
+                        select = employees.Find(x => x.Id == select.Chief.Id);
+                    }
+                }
+            }
         }
         public void DeleteEmployee(int id)
         {
@@ -71,16 +95,25 @@ namespace DNS_Test.Models
         }
         public List<Employee> ShowChiefs(int id)
         {
-            return connection.ShowChiefs(id);
+            Employee select = employees.Find(x => x.Id == id);
+            List<Employee> chiefs = new List<Employee>();
+            while (select.Chief != null)
+            {
+                //       select = employees.Find(x => x.Id == select.Chief.Id); // это поиск среди остального списка, а не по иерархии ссылок
+                select = select.Chief;
+                chiefs.Add(select);
+            }
+            return chiefs;
+           // return connection.ShowChiefs(id);
         }
         public Employee FindEmployee(int id)
         {
-            Employee adding = employees.Find(x => x.Id == id);
-            if (adding == null)
+            Employee select = employees.Find(x => x.Id == id);
+            if (select == null)
             {
                 connection.FindEmployee(id);
             }
-            return adding;
+            return select;
         }
     }
 }
