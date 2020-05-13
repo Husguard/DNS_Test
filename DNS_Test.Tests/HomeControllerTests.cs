@@ -13,7 +13,7 @@ using DNS_Test.Controllers;
 
 // КАТЕГОРИИ??? по взятию/изменению/удалению интерфейсы
 
-// юнит тестирование, разбор middleware, куки аутентификация, выяснение новых ID
+// юнит тестирование, разбор middleware, куки аутентификация
 namespace UnitTestApp.Tests
 {
     public class HomeControllerTests

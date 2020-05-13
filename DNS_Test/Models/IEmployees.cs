@@ -7,7 +7,7 @@ namespace DNS_Test.Models
 {
     public interface IEmployees
     {
-        void AddEmployee(Employee adding);
+        int AddEmployee(Employee adding);
         void DeleteEmployee(int id);
         Employee FindEmployee(int id);
     }

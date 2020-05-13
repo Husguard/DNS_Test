@@ -14,6 +14,7 @@
                 <div>
                     <label asp-for="Department" class="control-label"></label>
                     @Html.DropDownList("Department.Id", ViewBag.Departments as SelectList, new { id = "Department_Id", @class = "form-control"})
+                    <!-- ЗДЕСЬ МОЖНО ВЗЯТЬ ИМЯ ОТДЕЛА, ЧТОБЫ ВМЕСТЕ С ОБЪЕКТОМ ПЕРЕДАВАЛОСЬ ИМЯ?-->
                 </div>
                 <div>
                     <label asp-for="Post" class="control-label"></label>

@@ -8,6 +8,6 @@ namespace DNS_Test.Models
     public interface IDepartments
     {
         List<Department> GetDepartments();
-        void AddDepartment(string departmentName);
+        int AddDepartment(string departmentName);
     }
 }

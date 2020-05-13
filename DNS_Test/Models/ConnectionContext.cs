@@ -129,8 +129,9 @@ namespace DNS_Test.Models
             }
             return employees;
         }
-        public void AddDepartment(string departmentName)
+        public int AddDepartment(string departmentName)
         {
+            int newId = 0;
             using (SqlConnection connection = new SqlConnection(connectionName))
             {
                 connection.Open();
@@ -138,13 +139,14 @@ namespace DNS_Test.Models
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
                     command.Parameters.Add(new SqlParameter("@name", departmentName));
-                    command.ExecuteNonQuery();
+                    newId = Convert.ToInt32(command.ExecuteScalar());
                 }
                 connection.Close();
+                return newId;
             }
         }
         
-        public void AddEmployee(Employee adding)
+        public int AddEmployee(Employee adding)
         {
             // этот запрос можно исправить, если getsuggets будет возвращать employee
             using (SqlConnection connection = new SqlConnection(connectionName))
@@ -167,6 +169,7 @@ namespace DNS_Test.Models
                         }
                     }
                 }
+                int newId = 0;
                 sqlExpression = "EXEC ProcedureAddEmployee @Name, @Post, @Department, @Chief, @Date";
                 using (SqlCommand command = new SqlCommand(sqlExpression, connection))
                 {
@@ -176,9 +179,10 @@ namespace DNS_Test.Models
                     command.Parameters.Add(new SqlParameter("@Chief", adding.Chief.Id == 0 ? (object)DBNull.Value : adding.Chief.Id));
                     // начальник приходит инициализированным из-за взаимодействия с name свойством.
                     command.Parameters.Add(new SqlParameter("@Date", adding.Date.ToString("yyyy-MM-dd")));
-                    command.ExecuteNonQuery();
+                    newId = Convert.ToInt32(command.ExecuteScalar());
                 }
                 connection.Close();
+                return newId;
             }
         }
         public void DeleteEmployee(int id)

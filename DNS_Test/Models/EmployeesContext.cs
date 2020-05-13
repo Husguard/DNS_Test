@@ -36,9 +36,16 @@ namespace DNS_Test.Models
         }
         public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
         {
-            if (page * selected > employees.Count) page = 0; // грубое исправление
-            if (sort) return employees.OrderBy(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
-            else return employees.OrderByDescending(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
+            try
+            {
+                if (page * selected > employees.Count) page = (int)Math.Ceiling((decimal)employees.Count / selected); // грубое исправление
+                if (sort) return employees.OrderBy(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
+                else return employees.OrderByDescending(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
+            }
+            finally
+            {
+                
+            }
         }
         
         public int GetCountOfPages(int selected)
@@ -55,23 +62,24 @@ namespace DNS_Test.Models
             }
             return suggests;
         }
-        public void AddDepartment(string departmentName)
+        public int AddDepartment(string departmentName)
         {
-            connection.AddDepartment(departmentName);
-            // ID нового отдела неизвестен(решаемо загрузкой снова)
+            int newId = connection.AddDepartment(departmentName);
+            departments.Add(new Department() { Id = newId, Name = departmentName });
+            return newId;
         }
         public List<Department> GetDepartments()
         {
             return departments;
         }
-        public void AddEmployee(Employee adding)
+        public int AddEmployee(Employee adding)
         {
-            connection.AddEmployee(adding);
+            int newId = connection.AddEmployee(adding);
+            adding.Id = newId;
             adding.Department = departments.Find(x => x.Id == adding.Department.Id); // имя отдела не передаётся вместе с данными от формы
             adding.Chief = employees.Find(x => x.Id == adding.Chief.Id);
-            employees.Add(adding);  // ID нового неизвестен, как решить проблему определения ID новой записи
-            connection.DownloadEmployees();
-            // можно искать в бд нового добавленного и добавлять его
+            employees.Add(adding);
+            return newId;
         }
         private void UpdateReferences()
         {
