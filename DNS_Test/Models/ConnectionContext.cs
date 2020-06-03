@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DNS_Test.Models
 {
-    public class ConnectionContext : IContext
+    public class ConnectionContext : IContext, IDownloader
     {
         private SqlDataReader reader;
         private readonly string connectionName;
@@ -36,7 +36,7 @@ namespace DNS_Test.Models
             }
             return employees;
         }
-        public List<Department> GetDepartments() // плохо - downloaddepartments и getdepartments это один и тот же метод
+        public List<Department> GetDepartments()
         {
             return DownloadDepartments();
         }

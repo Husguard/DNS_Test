@@ -11,34 +11,28 @@ namespace DNS_Test.Models
     {
         private List<Employee> employees;
         private List<Department> departments;
+        private readonly IDownloader downloader;
         private readonly IContext connection; // это БД, с которой локалка синхронизируется, методы бд работают как подстраховка, если в локалке нет
+        // синхронизация нужна только по методам добавления и удаления, их можно в отдельный интерфейс засунуть и поменять его в connection, при этом оставив icontext
+        // интерфейсы накладываются друг на друга, то есть либо синхронизация и все остальное, либо работники/департамент сами выбирают что отсылать/оставлять в локалке
         public EmployeesContext()
         {
             connection = new ConnectionContext(); // по хорошему такие вещи создаются в middleware, чтобы класс не знал что именно ему нужно
-            departments = connection.DownloadDepartments();
-            employees = connection.DownloadEmployees();
-            
+            downloader = (ConnectionContext)connection; // если понадобится менять загрузчик - вставить свой, IContext все равно считвется БД с которой будет синхронизация(но в ней нет методов переноса из загрузчикав БД)
+            departments = downloader.DownloadDepartments();
+            employees = downloader.DownloadEmployees();
+            UpdateReferences();
         }
+        // нужно пересмотреть отношения интерфейсов, наложение происходит
         public IEnumerable<Employee> Test()
         {
             return new List<Employee>();
         }
-        public List<Employee> DownloadEmployees()
-        {
-            employees = connection.DownloadEmployees();
-            UpdateReferences();
-            return employees;
-        }
-        public List<Department> DownloadDepartments()
-        {
-            departments = connection.DownloadDepartments();
-            return departments;
-        }
-        public List<Employee> GetEmployees(int page, int selected, bool sort, bool column)
+        public List<Employee> GetEmployees(int page, int selected, bool sort, bool column) // selected тоже придется исправлять
         {
             try
             {
-                if (page * selected > employees.Count) page = (int)Math.Ceiling((decimal)employees.Count / selected); // грубое исправление
+                if (page * selected > employees.Count) page = GetCountOfPages(selected); // грубое исправление
                 if (sort) return employees.OrderBy(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
                 else return employees.OrderByDescending(x => column ? x.Name : x.Department.Name).ToList().GetRange(page * selected, selected % (employees.Count - page * selected));
             }
@@ -111,16 +105,18 @@ namespace DNS_Test.Models
                 select = select.Chief;
                 chiefs.Add(select);
             }
-            return chiefs;
+            return chiefs; 
            // return connection.ShowChiefs(id);
         }
         public Employee FindEmployee(int id)
         {
             Employee select = employees.Find(x => x.Id == id);
+            /*
             if (select == null)
             {
                 connection.FindEmployee(id);
             }
+            */
             return select;
         }
     }

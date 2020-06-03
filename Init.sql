@@ -14,12 +14,14 @@ CREATE TABLE [dbo].[Departments] (
 );
 GO
 CREATE TABLE [dbo].[Employees] (
-    [Id]         INT        IDENTITY (1, 1) NOT NULL,
-    [Name]       NCHAR (40) NOT NULL,
+    [Id]         INT        IDENTITY PRIMARY KEY NOT NULL,
+    [Name]       NCHAR (40) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
     [Department] INT        NOT NULL,
-    [Post]       NCHAR (40) NOT NULL,
+    [Post]       NCHAR (40) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
     [Chief]      INT        NULL,
-    [Date]       DATE       NOT NULL
+    [Date]       DATE       NOT NULL, 
+    CONSTRAINT [FK_EmployeesToEmployees] FOREIGN KEY ([Id]) REFERENCES [Employees]([Id]), 
+    CONSTRAINT [CK_Employees_Column] CHECK (1 = 1), 
 );
 GO
 ALTER DATABASE EmployeesDB

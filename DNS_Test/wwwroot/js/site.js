@@ -32,7 +32,6 @@ function AddEmployee() {
         }
     });
 }
-// крч метод создающий верстку форму для добавления отдела
 function ShowSuggests(e) {
     $("#suggests").empty();
     $("#suggests").hide();
