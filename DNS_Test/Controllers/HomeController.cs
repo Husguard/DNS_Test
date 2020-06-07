@@ -40,6 +40,14 @@ namespace DNS_Test.Controllers
             dynamic value = context.GetSuggests(name);
             return Json(value);
         }
+        public IActionResult FirstReactTest()
+        {
+            return View();
+        }
+        public IActionResult SecondReactTest()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(Exception exception)

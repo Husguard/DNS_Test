@@ -98,7 +98,7 @@ function ShowSuccess() {
     }, 2000);
 }
 $().ready(function () {
-    GetCountOfPages();
+ //   GetCountOfPages();
     $('input[name="column"]').on('change', function () { $("#Show").submit(); });
     $('input[name="page"]').on('change', function () { $("#Show").submit(); });
     $('input[name="sort"]').on('change', function () { $("#Show").submit(); });

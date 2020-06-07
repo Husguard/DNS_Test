@@ -20,8 +20,10 @@
     <Import Project="$(NuGetPackageRoot)xunit.core\2.4.1\build\xunit.core.props" Condition="Exists('$(NuGetPackageRoot)xunit.core\2.4.1\build\xunit.core.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">C:\Users\Админ\.nuget\packages\newtonsoft.json\9.0.1</PkgNewtonsoft_Json>
     <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">C:\Users\Админ\.nuget\packages\xunit.analyzers\0.10.0</Pkgxunit_analyzers>
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\Админ\.nuget\packages\microsoft.codeanalysis.analyzers\2.9.4</PkgMicrosoft_CodeAnalysis_Analyzers>
     <PkgjQuery Condition=" '$(PkgjQuery)' == '' ">C:\Users\Админ\.nuget\packages\jquery\1.8.0</PkgjQuery>
+    <PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86 Condition=" '$(PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86)' == '' ">C:\Users\Админ\.nuget\packages\javascriptengineswitcher.chakracore.native.win-x86\3.5.4</PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86>
+    <PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64 Condition=" '$(PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64)' == '' ">C:\Users\Админ\.nuget\packages\javascriptengineswitcher.chakracore.native.win-x64\3.5.4</PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64>
   </PropertyGroup>
 </Project>

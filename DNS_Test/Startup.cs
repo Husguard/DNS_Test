@@ -14,6 +14,9 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
+using React.AspNet;
+using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
+using JavaScriptEngineSwitcher.ChakraCore;
 
 namespace DNS_Test
 {
@@ -27,6 +30,9 @@ namespace DNS_Test
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddReact();
+            services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName).AddChakraCore();
             // Ќ≈ќЅ’ќƒ»ћќ —ќ«ƒј¬ј“№ ѕќƒ Ћё„≈Ќ»≈, но где? здесь или в классе сразу? services.AddSingleton<ConnectionContext>();
             // services.AddMemoryCache();
             // зачем использовать кэш, если можно создать экземпл€р класса?
@@ -45,6 +51,7 @@ namespace DNS_Test
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+            app.UseReact(config => { });
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseStatusCodePagesWithReExecute("/Home/Error", "?code={404}");// можно либо здесь редиректить, либо в конфигурации сервера
@@ -61,7 +68,6 @@ namespace DNS_Test
                     };
                 }
             });
-
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

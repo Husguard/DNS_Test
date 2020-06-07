@@ -12,7 +12,14 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)javascriptengineswitcher.chakracore.native.win-x86\3.5.4\build\JavaScriptEngineSwitcher.ChakraCore.Native.win-x86.props" Condition="Exists('$(NuGetPackageRoot)javascriptengineswitcher.chakracore.native.win-x86\3.5.4\build\JavaScriptEngineSwitcher.ChakraCore.Native.win-x86.props')" />
+    <Import Project="$(NuGetPackageRoot)javascriptengineswitcher.chakracore.native.win-x64\3.5.4\build\JavaScriptEngineSwitcher.ChakraCore.Native.win-x64.props" Condition="Exists('$(NuGetPackageRoot)javascriptengineswitcher.chakracore.native.win-x64\3.5.4\build\JavaScriptEngineSwitcher.ChakraCore.Native.win-x64.props')" />
+  </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\Админ\.nuget\packages\microsoft.codeanalysis.analyzers\2.9.4</PkgMicrosoft_CodeAnalysis_Analyzers>
     <PkgjQuery Condition=" '$(PkgjQuery)' == '' ">C:\Users\Админ\.nuget\packages\jquery\1.8.0</PkgjQuery>
+    <PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86 Condition=" '$(PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86)' == '' ">C:\Users\Админ\.nuget\packages\javascriptengineswitcher.chakracore.native.win-x86\3.5.4</PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x86>
+    <PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64 Condition=" '$(PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64)' == '' ">C:\Users\Админ\.nuget\packages\javascriptengineswitcher.chakracore.native.win-x64\3.5.4</PkgJavaScriptEngineSwitcher_ChakraCore_Native_win-x64>
   </PropertyGroup>
 </Project>
